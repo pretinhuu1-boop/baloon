@@ -115,7 +115,62 @@ export function AppPreview() {
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-    if (prefersReduced) return;
+    if (prefersReduced) {
+      // Make all hidden elements visible immediately
+      if (tagRef.current) {
+        tagRef.current.style.opacity = "1";
+        tagRef.current.style.transform = "none";
+      }
+      if (headlineRef.current) {
+        headlineRef.current.style.opacity = "1";
+        const chars = headlineRef.current.querySelectorAll(".char");
+        chars.forEach((c) => {
+          (c as HTMLElement).style.opacity = "1";
+          (c as HTMLElement).style.transform = "none";
+        });
+      }
+      if (slamRef.current) {
+        slamRef.current.style.opacity = "1";
+        const chars = slamRef.current.querySelectorAll(".char");
+        chars.forEach((c) => {
+          (c as HTMLElement).style.opacity = "1";
+          (c as HTMLElement).style.transform = "none";
+        });
+      }
+      if (tableRef.current) {
+        const ths = tableRef.current.querySelectorAll("th");
+        ths.forEach((th) => {
+          (th as HTMLElement).style.opacity = "1";
+          (th as HTMLElement).style.transform = "none";
+        });
+        const trs = tableRef.current.querySelectorAll("tbody tr");
+        trs.forEach((tr) => {
+          (tr as HTMLElement).style.opacity = "1";
+          (tr as HTMLElement).style.transform = "none";
+          (tr as HTMLElement).style.clipPath = "none";
+        });
+      }
+      if (mobileCardsRef.current) {
+        const cards = mobileCardsRef.current.querySelectorAll(".mobile-card");
+        cards.forEach((c) => {
+          (c as HTMLElement).style.opacity = "1";
+          (c as HTMLElement).style.transform = "none";
+        });
+      }
+      if (diffCardsRef.current) {
+        const cards = diffCardsRef.current.querySelectorAll(".diff-card");
+        cards.forEach((c) => {
+          (c as HTMLElement).style.opacity = "1";
+          (c as HTMLElement).style.transform = "none";
+        });
+        const icons = diffCardsRef.current.querySelectorAll(".diff-icon");
+        icons.forEach((ic) => {
+          (ic as HTMLElement).style.opacity = "1";
+          (ic as HTMLElement).style.transform = "none";
+        });
+      }
+      return;
+    }
 
     const ctx = gsap.context(() => {
       // --- Header animations ---

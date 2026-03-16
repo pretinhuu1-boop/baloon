@@ -111,7 +111,42 @@ export function CommunitySection() {
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-    if (prefersReduced) return;
+    if (prefersReduced) {
+      // Make all hidden elements visible immediately
+      if (tagRef.current) {
+        tagRef.current.style.opacity = "1";
+        tagRef.current.style.transform = "none";
+      }
+      if (headlineRef.current) {
+        headlineRef.current.style.opacity = "1";
+        const chars = headlineRef.current.querySelectorAll(".char");
+        chars.forEach((c) => {
+          (c as HTMLElement).style.opacity = "1";
+          (c as HTMLElement).style.transform = "none";
+        });
+      }
+      if (subtitleRef.current) {
+        subtitleRef.current.style.opacity = "1";
+        subtitleRef.current.style.transform = "none";
+        subtitleRef.current.style.filter = "none";
+      }
+      if (cardsContainerRef.current) {
+        const cards = cardsContainerRef.current.querySelectorAll(".community-card");
+        cards.forEach((c) => {
+          (c as HTMLElement).style.opacity = "1";
+          (c as HTMLElement).style.transform = "none";
+        });
+        const icons = cardsContainerRef.current.querySelectorAll(".community-icon");
+        icons.forEach((ic) => {
+          (ic as HTMLElement).style.opacity = "1";
+          (ic as HTMLElement).style.transform = "none";
+        });
+      }
+      if (noteRef.current) {
+        noteRef.current.style.opacity = "1";
+      }
+      return;
+    }
 
     const ctx = gsap.context(() => {
       // --- Background Parallax ---

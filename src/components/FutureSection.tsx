@@ -67,7 +67,44 @@ export function FutureSection() {
 
   useEffect(() => {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced) return;
+    if (prefersReduced) {
+      // Make all hidden elements visible immediately
+      if (tagRef.current) {
+        tagRef.current.style.opacity = "1";
+        tagRef.current.style.transform = "none";
+      }
+      if (titleAlemRef.current) {
+        titleAlemRef.current.style.opacity = "1";
+        const chars = titleAlemRef.current.querySelectorAll(".char");
+        chars.forEach((c) => {
+          (c as HTMLElement).style.opacity = "1";
+          (c as HTMLElement).style.transform = "none";
+        });
+      }
+      if (titleFutebolRef.current) {
+        titleFutebolRef.current.style.opacity = "1";
+        const chars = titleFutebolRef.current.querySelectorAll(".char");
+        chars.forEach((c) => {
+          (c as HTMLElement).style.opacity = "1";
+          (c as HTMLElement).style.transform = "none";
+        });
+      }
+      if (subtitleRef.current) {
+        subtitleRef.current.style.opacity = "1";
+        subtitleRef.current.style.transform = "none";
+      }
+      cardRefs.current.forEach((card) => {
+        if (card) {
+          card.style.opacity = "1";
+          card.style.transform = "none";
+        }
+      });
+      if (taglineRef.current) {
+        taglineRef.current.style.opacity = "1";
+        taglineRef.current.style.transform = "none";
+      }
+      return;
+    }
 
     const ctx = gsap.context(() => {
       // Header animations

@@ -140,7 +140,34 @@ export function FAQSection() {
 
   useEffect(() => {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced) return;
+    if (prefersReduced) {
+      // Make all hidden elements visible immediately
+      if (tagRef.current) {
+        tagRef.current.style.opacity = "1";
+        tagRef.current.style.transform = "none";
+      }
+      if (titleRef.current) {
+        titleRef.current.style.opacity = "1";
+        const chars = titleRef.current.querySelectorAll(".char");
+        chars.forEach((c) => {
+          (c as HTMLElement).style.opacity = "1";
+          (c as HTMLElement).style.transform = "none";
+        });
+      }
+      itemRefs.current.forEach((item) => {
+        if (item) {
+          item.style.opacity = "1";
+          item.style.transform = "none";
+          item.style.clipPath = "none";
+        }
+      });
+      lineRefs.current.forEach((line) => {
+        if (line) {
+          line.style.transform = "scaleX(1)";
+        }
+      });
+      return;
+    }
 
     const ctx = gsap.context(() => {
       // Header animations
