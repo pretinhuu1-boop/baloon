@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -28,31 +28,24 @@ export function SlotMachineCounter({
 }: SlotMachineCounterProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const shockwaveRef = useRef<HTMLDivElement>(null);
-  const hasAnimated = useRef(false);
+  const [isReducedMotion, setIsReducedMotion] = useState(false);
 
   const formatted = formatBRLChars(target);
   const prefixChars = prefix.split("");
-
-  // Separate digits from separators
   const displayChars = [...prefixChars, ...formatted];
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
     if (prefersReduced) {
-      // Show final state immediately
-      const strips = container.querySelectorAll<HTMLDivElement>("[data-digit-strip]");
-      strips.forEach((strip) => {
-        const targetDigit = parseInt(strip.dataset.targetDigit || "0", 10);
-        strip.style.transform = `translateY(-${targetDigit * DIGIT_HEIGHT}em)`;
-      });
+      setIsReducedMotion(true);
       return;
     }
+
+    const container = containerRef.current;
+    if (!container) return;
 
     const ctx = gsap.context(() => {
       const strips = container.querySelectorAll<HTMLDivElement>("[data-digit-strip]");
@@ -125,6 +118,15 @@ export function SlotMachineCounter({
 
     return () => ctx.revert();
   }, [target]);
+
+  // Reduced motion: render static formatted number
+  if (isReducedMotion) {
+    return (
+      <div className={`relative inline-flex items-center ${className || ""}`}>
+        <span>{prefix}{target.toLocaleString("pt-BR")}</span>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className={`relative inline-flex items-center ${className || ""}`}>

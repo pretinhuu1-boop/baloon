@@ -246,7 +246,7 @@ export function FAQSection() {
             className="text-sm font-semibold uppercase tracking-widest text-ballion-gold mb-4 inline-block"
             style={{ opacity: 0 }}
           >
-            D\u00favidas Frequentes
+            Dúvidas Frequentes
           </span>
           <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold uppercase text-white mt-3">
             <SplitText ref={titleRef} style={{ opacity: 0 }}>

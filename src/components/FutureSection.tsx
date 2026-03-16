@@ -240,7 +240,7 @@ export function FutureSection() {
             className="text-sm font-semibold uppercase tracking-widest text-ballion-gold mb-4 inline-block"
             style={{ opacity: 0 }}
           >
-            Vis\u00e3o de Futuro
+            Visão de Futuro
           </span>
           <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold uppercase text-white mt-3">
             <SplitText ref={titleAlemRef} style={{ opacity: 0 }}>
@@ -255,10 +255,10 @@ export function FutureSection() {
             className="text-ballion-muted text-lg mt-4 max-w-2xl mx-auto"
             style={{ opacity: 0 }}
           >
-            A BALLION n\u00e3o \u00e9 s\u00f3 futebol. \u00c9 uma plataforma global de desafios
+            A BALLION não é só futebol. É uma plataforma global de desafios
             esportivos. Sempre seguindo o conceito:{" "}
             <span className="text-white font-semibold">
-              Uma bola. Um celular. Um milh\u00e3o.
+              Uma bola. Um celular. Um milhão.
             </span>
           </p>
         </div>
@@ -291,7 +291,7 @@ export function FutureSection() {
           className="text-center text-ballion-gold mt-12 text-lg font-medium"
           style={{ opacity: 0 }}
         >
-          Cada novo esporte = novo mercado + novo p\u00fablico + nova receita
+          Cada novo esporte = novo mercado + novo público + nova receita
         </p>
       </div>
     </section>
