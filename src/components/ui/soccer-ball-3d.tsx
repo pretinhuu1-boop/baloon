@@ -131,7 +131,7 @@ function Ball() {
 
       {/* Gold orbit ring — slowly rotating */}
       <mesh ref={ringRef}>
-        <torusGeometry args={[2.1, 0.02, 16, 120]} />
+        <torusGeometry args={[2.0, 0.02, 16, 120]} />
         <meshStandardMaterial
           color="#D4A54A"
           emissive="#D4A54A"
@@ -145,7 +145,7 @@ function Ball() {
 
       {/* Second ring — tilted */}
       <mesh ref={ring2Ref} rotation={[Math.PI / 5, 0, Math.PI / 7]}>
-        <torusGeometry args={[2.25, 0.012, 16, 120]} />
+        <torusGeometry args={[2.1, 0.012, 16, 120]} />
         <meshStandardMaterial
           color="#F5D78E"
           emissive="#F5D78E"
@@ -159,7 +159,7 @@ function Ball() {
 
       {/* Third ring — opposite tilt for depth */}
       <mesh rotation={[-Math.PI / 8, Math.PI / 4, 0]}>
-        <torusGeometry args={[2.4, 0.008, 16, 120]} />
+        <torusGeometry args={[2.2, 0.008, 16, 120]} />
         <meshBasicMaterial color="#F5D78E" transparent opacity={0.15} />
       </mesh>
 
