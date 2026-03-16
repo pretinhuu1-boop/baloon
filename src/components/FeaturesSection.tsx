@@ -56,10 +56,12 @@ const steps = [
 
 export function FeaturesSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const headerTagRef = useRef<HTMLSpanElement>(null);
   const headerComoRef = useRef<HTMLSpanElement>(null);
   const headerFuncionaRef = useRef<HTMLSpanElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -69,7 +71,6 @@ export function FeaturesSection() {
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (prefersReduced) {
-      // Make everything visible instantly
       [headerTagRef, headerComoRef, headerFuncionaRef].forEach((ref) => {
         if (ref.current) {
           ref.current.style.opacity = "1";
@@ -92,96 +93,123 @@ export function FeaturesSection() {
     }
 
     const ctx = gsap.context(() => {
-      // === HEADER ANIMATIONS ===
-      // "PASSO A PASSO" tag — fade up with letter spacing expansion
+      // ============================================================
+      // HEADER — scrub-driven parallax split text
+      // The entire header pins briefly while chars animate in,
+      // then "COMO" drifts left and "FUNCIONA" drifts right as
+      // the user scrolls past — creating a kinetic split effect.
+      // ============================================================
+
       const tagChars = headerTagRef.current?.querySelectorAll(".char") || [];
-      gsap.fromTo(
-        tagChars,
-        { opacity: 0, y: 15, letterSpacing: "0em" },
-        {
-          opacity: 1, y: 0, letterSpacing: "0.2em",
-          duration: 0.6, ease: "power3.out",
-          stagger: 0.02,
-          scrollTrigger: {
-            trigger: headerTagRef.current,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-
-      // "COMO" — chars sweep in from left with rotation
       const comoChars = headerComoRef.current?.querySelectorAll(".char") || [];
-      gsap.fromTo(
-        comoChars,
-        { opacity: 0, x: -30, rotateY: -45 },
-        {
-          opacity: 1, x: 0, rotateY: 0,
-          duration: 0.7, ease: "power3.out",
-          stagger: 0.04,
-          scrollTrigger: {
-            trigger: headerComoRef.current,
-            start: "top 82%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-
-      // "FUNCIONA" — chars explode in from right with gold glow buildup
       const funcionaChars = headerFuncionaRef.current?.querySelectorAll(".char") || [];
-      gsap.fromTo(
-        funcionaChars,
-        { opacity: 0, x: 40, scale: 0.5, rotateZ: 10 },
-        {
-          opacity: 1, x: 0, scale: 1, rotateZ: 0,
-          duration: 0.7, ease: "back.out(1.4)",
-          stagger: 0.04,
-          scrollTrigger: {
-            trigger: headerFuncionaRef.current,
-            start: "top 82%",
-            toggleActions: "play none none none",
-          },
-        }
+
+      // Phase 1: Chars scrub in as you scroll into the section
+      const headerEntryTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: headerRef.current,
+          start: "top 80%",
+          end: "top 40%",
+          scrub: 0.8,
+        },
+      });
+
+      // Tag: each char fades in + rises from below, scrubbed to scroll
+      headerEntryTl.fromTo(
+        tagChars,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, stagger: 0.05, ease: "none" }
       );
 
-      // Gold glow pulse after FUNCIONA lands
-      if (headerFuncionaRef.current) {
-        gsap.fromTo(
-          headerFuncionaRef.current,
-          { textShadow: "0 0 0px rgba(212,165,74,0)" },
-          {
-            textShadow: "0 0 20px rgba(212,165,74,0.5), 0 0 40px rgba(212,165,74,0.2)",
-            duration: 0.8, ease: "power2.out",
-            yoyo: true, repeat: 1,
-            scrollTrigger: {
-              trigger: headerFuncionaRef.current,
-              start: "top 80%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
+      // COMO: chars sweep from left with 3D rotation, staggered
+      headerEntryTl.fromTo(
+        comoChars,
+        { opacity: 0, x: -50, rotateY: -60 },
+        { opacity: 1, x: 0, rotateY: 0, stagger: 0.06, ease: "none" },
+        0.2
+      );
+
+      // FUNCIONA: chars sweep from right with scale, staggered
+      headerEntryTl.fromTo(
+        funcionaChars,
+        { opacity: 0, x: 50, scale: 0.3, rotateZ: 15 },
+        { opacity: 1, x: 0, scale: 1, rotateZ: 0, stagger: 0.05, ease: "none" },
+        0.25
+      );
+
+      // Phase 2: Parallax drift — COMO drifts left, FUNCIONA drifts right
+      // as user scrolls through the cards area. Creates depth & energy.
+      if (headerComoRef.current && headerFuncionaRef.current) {
+        gsap.to(headerComoRef.current, {
+          x: -40,
+          opacity: 0.3,
+          scrollTrigger: {
+            trigger: cardsContainerRef.current,
+            start: "top 60%",
+            end: "bottom 20%",
+            scrub: 1.2,
+          },
+        });
+
+        gsap.to(headerFuncionaRef.current, {
+          x: 40,
+          opacity: 0.3,
+          textShadow: "0 0 30px rgba(212,165,74,0.6), 0 0 60px rgba(212,165,74,0.3)",
+          scrollTrigger: {
+            trigger: cardsContainerRef.current,
+            start: "top 60%",
+            end: "bottom 20%",
+            scrub: 1.2,
+          },
+        });
+
+        // Tag also fades and drifts up
+        gsap.to(headerTagRef.current, {
+          y: -20,
+          opacity: 0,
+          scrollTrigger: {
+            trigger: cardsContainerRef.current,
+            start: "top 60%",
+            end: "bottom 30%",
+            scrub: 1.2,
+          },
+        });
       }
 
-      // === CONNECTING LINE — progressive draw ===
+      // ============================================================
+      // CONNECTING LINE — progressive draw scrubbed to scroll
+      // ============================================================
       if (lineRef.current) {
         gsap.fromTo(
           lineRef.current,
           { scaleX: 0 },
           {
             scaleX: 1,
-            duration: 1.5,
-            ease: "power2.inOut",
+            ease: "none",
             scrollTrigger: {
-              trigger: lineRef.current,
-              start: "top 75%",
+              trigger: cardsContainerRef.current,
+              start: "top 70%",
               end: "top 30%",
-              scrub: 1,
+              scrub: 0.8,
             },
           }
         );
       }
 
-      // === CARDS — staggered entrance with 3D depth ===
+      // ============================================================
+      // CARDS — sequential scroll-scrubbed reveals
+      // Each card animates in sequence as you scroll, not all at once.
+      // Numbers have independent parallax (move faster than card).
+      // ============================================================
+      const cardsTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: cardsContainerRef.current,
+          start: "top 75%",
+          end: "bottom 50%",
+          scrub: 0.8,
+        },
+      });
+
       cardsRef.current.forEach((card, i) => {
         if (!card) return;
 
@@ -190,106 +218,101 @@ export function FeaturesSection() {
         const titleEl = card.querySelector(".step-title");
         const descEl = card.querySelector(".step-desc");
 
-        const tl = gsap.timeline({
+        const offset = i * 0.18; // stagger offset in timeline
+
+        // Card slides up + rotates from tilted perspective
+        cardsTl.fromTo(
+          card,
+          { opacity: 0, y: 80, rotateX: 12, scale: 0.9 },
+          { opacity: 1, y: 0, rotateX: 0, scale: 1, duration: 0.25, ease: "none" },
+          offset
+        );
+
+        // Number scales down from oversized — creates dramatic punch
+        if (numberEl) {
+          cardsTl.fromTo(
+            numberEl,
+            { opacity: 0, scale: 3, y: -30 },
+            { opacity: 1, scale: 1, y: 0, duration: 0.2, ease: "none" },
+            offset + 0.02
+          );
+        }
+
+        // Icon spins in
+        if (iconEl) {
+          cardsTl.fromTo(
+            iconEl,
+            { opacity: 0, scale: 0, rotateZ: -120 },
+            { opacity: 1, scale: 1, rotateZ: 0, duration: 0.15, ease: "none" },
+            offset + 0.08
+          );
+        }
+
+        // Title blurs in from side
+        if (titleEl) {
+          cardsTl.fromTo(
+            titleEl,
+            { opacity: 0, x: -30, filter: "blur(6px)" },
+            { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.15, ease: "none" },
+            offset + 0.1
+          );
+        }
+
+        // Description fades up
+        if (descEl) {
+          cardsTl.fromTo(
+            descEl,
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.12, ease: "none" },
+            offset + 0.13
+          );
+        }
+      });
+
+      // ============================================================
+      // STEP NUMBERS — independent parallax float (continuous)
+      // Numbers move at a different rate than their cards as you
+      // scroll past, creating a layered depth effect.
+      // ============================================================
+      cardsRef.current.forEach((card, i) => {
+        if (!card) return;
+        const numberEl = card.querySelector(".step-number");
+        if (!numberEl) return;
+
+        // Each number drifts upward at its own speed
+        gsap.to(numberEl, {
+          y: -25 - i * 8,
           scrollTrigger: {
             trigger: card,
-            start: "top 85%",
-            toggleActions: "play none none none",
+            start: "top 60%",
+            end: "bottom 10%",
+            scrub: 1.5,
           },
         });
-
-        // Card container — slide up with perspective tilt
-        tl.fromTo(
-          card,
-          {
-            opacity: 0,
-            y: 60,
-            rotateX: 8,
-            scale: 0.95,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            rotateX: 0,
-            scale: 1,
-            duration: 0.7,
-            ease: "power3.out",
-            delay: i * 0.1,
-          }
-        );
-
-        // Number — dramatic scale-up with parallax offset
-        if (numberEl) {
-          tl.fromTo(
-            numberEl,
-            { opacity: 0, scale: 2.5, y: -20 },
-            {
-              opacity: 1, scale: 1, y: 0,
-              duration: 0.6, ease: "back.out(1.6)",
-            },
-            "-=0.5"
-          );
-        }
-
-        // Icon — rotate in from side
-        if (iconEl) {
-          tl.fromTo(
-            iconEl,
-            { opacity: 0, scale: 0, rotateZ: -90 },
-            {
-              opacity: 1, scale: 1, rotateZ: 0,
-              duration: 0.5, ease: "back.out(2)",
-            },
-            "-=0.4"
-          );
-        }
-
-        // Title — slide in from left
-        if (titleEl) {
-          tl.fromTo(
-            titleEl,
-            { opacity: 0, x: -25, filter: "blur(4px)" },
-            {
-              opacity: 1, x: 0, filter: "blur(0px)",
-              duration: 0.5, ease: "power3.out",
-            },
-            "-=0.3"
-          );
-        }
-
-        // Description — fade in with slight upward drift
-        if (descEl) {
-          tl.fromTo(
-            descEl,
-            { opacity: 0, y: 15 },
-            {
-              opacity: 1, y: 0,
-              duration: 0.5, ease: "power2.out",
-            },
-            "-=0.2"
-          );
-        }
       });
 
-      // === ARROW CONNECTORS — fade in after cards ===
+      // ============================================================
+      // ARROW CONNECTORS — draw in sequentially
+      // ============================================================
       const arrows = section.querySelectorAll(".step-arrow");
-      arrows.forEach((arrow, i) => {
-        gsap.fromTo(
-          arrow,
-          { opacity: 0, x: -10 },
-          {
-            opacity: 1, x: 0,
-            duration: 0.4,
-            delay: 0.3 + i * 0.15,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: arrow,
-              start: "top 80%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      });
+      if (arrows.length) {
+        const arrowTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: cardsContainerRef.current,
+            start: "top 50%",
+            end: "top 20%",
+            scrub: 0.8,
+          },
+        });
+        arrows.forEach((arrow, i) => {
+          arrowTl.fromTo(
+            arrow,
+            { opacity: 0, x: -15, scale: 0.5 },
+            { opacity: 1, x: 0, scale: 1, duration: 0.15, ease: "none" },
+            i * 0.2
+          );
+        });
+      }
     }, section);
 
     return () => ctx.revert();
@@ -306,12 +329,12 @@ export function FeaturesSection() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_center,_rgba(212,165,74,0.04)_0%,_transparent_60%)] pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section header — kinetic split text */}
-        <div className="text-center mb-20">
+        {/* Section header — kinetic split text with scroll parallax */}
+        <div ref={headerRef} className="text-center mb-20 overflow-visible">
           <p className="mb-4">
             <SplitText
               ref={headerTagRef}
-              className="text-sm font-semibold uppercase tracking-[0.2em] text-ballion-gold font-body opacity-0"
+              className="text-sm font-semibold uppercase tracking-[0.2em] text-ballion-gold font-body"
             >
               PASSO A PASSO
             </SplitText>
@@ -319,7 +342,7 @@ export function FeaturesSection() {
           <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold uppercase">
             <SplitText
               ref={headerComoRef}
-              className="inline-block text-white opacity-0"
+              className="inline-block text-white"
               style={{ perspective: "400px" }}
             >
               COMO
@@ -327,7 +350,7 @@ export function FeaturesSection() {
             {" "}
             <SplitText
               ref={headerFuncionaRef}
-              className="inline-block text-ballion-gold opacity-0"
+              className="inline-block text-ballion-gold"
             >
               FUNCIONA
             </SplitText>
@@ -335,8 +358,8 @@ export function FeaturesSection() {
         </div>
 
         {/* Steps grid with connecting lines */}
-        <div className="relative">
-          {/* Horizontal connecting line — desktop only — now animated */}
+        <div ref={cardsContainerRef} className="relative">
+          {/* Horizontal connecting line — desktop only — scrub animated */}
           <div className="hidden lg:block absolute top-[72px] left-[12.5%] right-[12.5%] h-px z-0">
             <div
               ref={lineRef}
@@ -355,7 +378,7 @@ export function FeaturesSection() {
               <div
                 key={step.number}
                 ref={(el) => { cardsRef.current[i] = el; }}
-                className="group relative glass rounded-2xl p-8 hover:border-ballion-gold/40 transition-all duration-500 h-full opacity-0"
+                className="group relative glass rounded-2xl p-8 hover:border-ballion-gold/40 transition-all duration-500 h-full"
                 style={{ transformStyle: "preserve-3d" }}
               >
                 {/* Gold top accent line on hover */}
@@ -381,7 +404,7 @@ export function FeaturesSection() {
 
                 {/* Arrow indicator to next step — not on last */}
                 {i < steps.length - 1 && (
-                  <div className="step-arrow hidden lg:flex absolute -right-5 top-[68px] w-10 h-10 items-center justify-center z-10 opacity-0">
+                  <div className="step-arrow hidden lg:flex absolute -right-5 top-[68px] w-10 h-10 items-center justify-center z-10">
                     <svg
                       className="w-5 h-5 text-ballion-gold/40"
                       fill="none"
