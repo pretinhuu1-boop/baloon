@@ -13,8 +13,27 @@ PARAR. Pensar. Não tocar em nada até entender a causa real. Falha é informaç
 - **Máximo 3 ações, depois verificar.** Mais de 5 sem checagem acumula erros invisíveis.
 - **Chesterton's Fence** — Antes de remover qualquer coisa, explicar por que existe. "Parece não usado" exige prova com referências e git history.
 - **Verificação é a regra de maior impacto.** Sempre rodar `npm run lint` e `npm run build` após implementações.
-- **Sem TODOs, placeholders ou trechos incompletos.** Entregar código pronto.
+- **Sem TODOs, placeholders ou trechos incompletos.** Entregar código pronto e funcional.
 - **3 exemplos reais antes de abstrair.** Escreva código similar 2 vezes; só abstraia na terceira.
+
+### Anti-Alucinação
+
+- IMPORTANTE: Usar APENAS contexto fornecido e arquivos lidos. Se não tem certeza, PERGUNTAR — não inventar.
+- Antes de codar: **ANALISAR** (estado atual) → **PLANEJAR** (passos atômicos) → **VERIFICAR** plano → **GERAR** código.
+- Citar fontes: referenciar arquivos e linhas exatos.
+- Se uma feature é impossível, explicar por quê e sugerir alternativas.
+- "Não sei" é resposta válida. Confiança falsa é pior que incerteza.
+
+### Next.js / React / TypeScript
+
+- Server Components por padrão. `'use client'` APENAS para: onClick, onChange, useState, useEffect, browser APIs.
+- Minimizar `useEffect` e `setState`. Favorecer RSC e Server Actions.
+- Functional components com `function`, não `const`. Arrow functions só para callbacks.
+- Interfaces para objetos, `type` para unions/intersections. Evitar `enum`, usar `as const`.
+- Imports agrupados: 1) React/Next 2) third-party 3) locais `@/*`
+- Nomes descritivos: `isLoading`, `hasError`, `handleClick`, `handleSubmit`
+- Early returns para error handling. Happy path por último.
+- Dynamic loading para componentes não-críticos. Images: WebP, lazy loading.
 
 ### Git
 

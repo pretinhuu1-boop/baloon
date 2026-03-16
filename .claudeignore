@@ -1,0 +1,27 @@
+# Build artifacts
+.next/
+out/
+dist/
+build/
+
+# Dependencies
+node_modules/
+
+# Lock files (huge, token-expensive)
+package-lock.json
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
