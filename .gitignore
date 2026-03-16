@@ -1,8 +1,12 @@
-# Dependências
+# Dependencies
 node_modules/
-.gradle/
-Pods/
-vendor/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Next.js
+.next/
+out/
 
 # Build
 build/
@@ -11,7 +15,7 @@ dist/
 *.ipa
 *.aab
 
-# Ambiente
+# Environment
 .env
 .env.local
 .env.*.local
@@ -31,5 +35,12 @@ Thumbs.db
 *.log
 npm-debug.log*
 
-# Testes
+# Testing
 coverage/
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
