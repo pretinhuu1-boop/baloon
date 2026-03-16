@@ -2,78 +2,54 @@
 
 ---
 
-## REGRAS DE OPERAÇÃO — ANÁLISE DE PROJETOS EXTERNOS
+## REGRAS DE OPERAÇÃO — INTEGRAÇÃO DE PROJETOS EXTERNOS
 
-> Protocolo obrigatório para quando trabalhamos com repositórios GitHub, projetos open source ou qualquer codebase externo que será integrado ao nosso projeto.
+> Protocolo para trabalhar com repos GitHub, open source ou qualquer codebase externo.
 
-### Por que isso existe
+### Princípio Central
 
-Cada sessão do Claude começa do zero. Sem documentação prévia, toda análise precisa ser refeita do início. Isso desperdiça tempo e gera compreensão superficial. A única forma de misturar projetos de forma efetiva é entendê-los tão bem quanto o nosso próprio código.
+Sessões do Claude começam do zero. Sem documentação, toda análise se perde. O documento de análise é a **memória persistente** entre sessões — sem ele, não há integração efetiva.
 
-### Protocolo de Análise Profunda
+### FASE 1 — Compreensão Total
 
-**FASE 1 — Varredura Completa (obrigatória antes de qualquer ação)**
+Antes de tocar em qualquer código, entender o projeto inteiro:
 
-1. **Ler TODOS os arquivos de configuração** — `package.json`, `tsconfig.json`, configs de build, `.env.example`, lockfiles. Entender dependências, scripts, versões exatas.
-2. **Mapear a arquitetura inteira** — Cada pasta, cada arquivo, a árvore completa. Nenhum arquivo pode ser ignorado.
-3. **Ler linha a linha os arquivos-chave** — Entry points, rotas, componentes principais, módulos core, middleware, hooks, utils. Não basta saber que existem, é preciso entender O QUE fazem e COMO fazem.
-4. **Identificar padrões do projeto** — Convenções de nomes, estrutura de componentes, gerenciamento de estado, estratégia de estilo, tratamento de erros, padrões de API.
-5. **Mapear dependências internas** — Quem importa quem. Quais módulos são acoplados. Onde estão os pontos de integração.
+1. **Configs primeiro** — `package.json`, `tsconfig`, builds, `.env.example`. Versões exatas importam.
+2. **Árvore completa** — Cada pasta, cada arquivo mapeado. Nada ignorado.
+3. **Código linha a linha** — Entry points, rotas, componentes core, hooks, utils. Saber O QUE faz e COMO faz.
+4. **Padrões** — Naming, estrutura, state management, estilos, error handling.
+5. **Grafo de dependências** — Quem importa quem. Acoplamentos. Pontos de conexão.
 
-**FASE 2 — Documentação de Referência (obrigatória após análise)**
+### FASE 2 — Documento de Referência
 
-Após compreensão total, gerar um documento de referência (`ANÁLISE-<nome-do-projeto>.md`) contendo:
+Gerar `docs/ANÁLISE-<projeto>.md` com:
 
-```
-1. IDENTIDADE
-   - Nome, propósito, público-alvo
-   - Tech stack com versões exatas
+1. **Identidade** — Propósito, stack, versões
+2. **Arquitetura** — Árvore de diretórios + fluxo de dados
+3. **Mapa de módulos** — Cada um com: responsabilidade, props, imports, quem o usa
+4. **Padrões** — Convenções, patterns recorrentes, design tokens
+5. **Pontos de integração** — APIs, eventos, tipos compartilháveis, onde conectar
+6. **Armadilhas** — Comportamentos não óbvios, configs frágeis, débitos técnicos
 
-2. ARQUITETURA
-   - Árvore de diretórios completa com descrição de cada arquivo
-   - Fluxo de dados (entrada → processamento → saída)
-   - Pontos de entrada da aplicação
+**CRÍTICO:** Incluir no documento **trechos de código completos** das partes que serão reutilizadas. Copiar funções inteiras, componentes inteiros, blocos de config inteiros — exatamente como estão no original. Isso economiza tokens nas sessões futuras (não precisa reler o projeto fonte) e garante precisão na integração.
 
-3. MAPA DE COMPONENTES / MÓDULOS
-   - Cada componente/módulo com:
-     - Responsabilidade (o que faz)
-     - Props/parâmetros que aceita
-     - Dependências (o que importa)
-     - Dependentes (quem o usa)
+### FASE 3 — Integração Cirúrgica
 
-4. PADRÕES E CONVENÇÕES
-   - Naming conventions
-   - Estrutura de arquivos
-   - Patterns recorrentes (HOCs, hooks, composables, etc.)
-   - Design system / tokens de design
+A filosofia é: **copiar o que funciona, codar só a cola.**
 
-5. PONTOS DE INTEGRAÇÃO
-   - APIs expostas ou consumidas
-   - Eventos emitidos/recebidos
-   - Interfaces/tipos compartilháveis
-   - Onde nosso projeto pode se conectar
+1. **Extrair com precisão** — Copiar seções inteiras, componentes completos, módulos prontos. Não reescrever o que já existe e funciona.
+2. **Codar apenas as ligações** — O trabalho criativo é conectar as peças: adaptar imports, ajustar interfaces, criar bridges entre os projetos.
+3. **Não reinventar a roda** — Se o projeto fonte resolve um problema, usar a solução dele. Adaptar > recriar.
+4. **Pensar fora da caixa** — Nem sempre a integração óbvia é a melhor. Considerar: posso usar esse módulo de forma diferente do original? Posso combinar partes de projetos diferentes de forma criativa?
+5. **Validar conflitos** — Checar dependências conflitantes e versões que colidem antes de integrar.
 
-6. ARMADILHAS E OBSERVAÇÕES
-   - Comportamentos não óbvios
-   - Configurações que quebram se alteradas
-   - Dependências de versão críticas
-   - TODOs e débitos técnicos encontrados
-```
+### Mentalidade
 
-**FASE 3 — Validação antes de integrar**
-
-1. **Nunca copiar código sem entender** — Se não consegue explicar cada linha, não está pronto para integrar.
-2. **Identificar conflitos** — Dependências conflitantes, padrões incompatíveis, versões que colidem.
-3. **Planejar a integração** — Definir exatamente quais partes serão extraídas, adaptadas ou reescritas.
-4. **Testar isoladamente** — Antes de misturar, garantir que o trecho funciona sozinho.
-
-### Regras Gerais
-
-- **Profundidade > Velocidade** — Melhor demorar na análise do que quebrar na integração.
-- **Documento primeiro, código depois** — O documento de análise DEVE existir antes de qualquer `import` ou `copy-paste`.
-- **Reler antes de cada sessão** — O CLAUDE.md e os documentos de análise são a primeira coisa a ser lida em qualquer sessão nova.
-- **Atualizar sempre** — Se durante o trabalho algo novo for descoberto, o documento deve ser atualizado imediatamente.
-- **Um projeto por vez** — Analisar completamente um projeto externo antes de começar outro.
+- **Documento primeiro, código depois** — A análise DEVE existir antes de qualquer integração
+- **Copiar > recriar** — Código que já funciona não precisa ser reescrito, precisa ser conectado
+- **Economizar tokens** — Documentar trechos de código no documento de análise para não precisar reler o projeto fonte em sessões futuras
+- **Reler no início de cada sessão** — CLAUDE.md e documentos de análise são ponto de partida obrigatório
+- **Atualizar sempre** — Descobriu algo novo? Atualiza o documento imediatamente
 
 ---
 
