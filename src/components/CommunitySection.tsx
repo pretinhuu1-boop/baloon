@@ -1,7 +1,12 @@
 "use client";
 
+import { useRef, useEffect } from "react";
 import Image from "next/image";
-import { ScrollReveal } from "./ui/scroll-reveal";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "./ui/split-text";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const SoccerBallIcon = () => (
   <svg
@@ -93,20 +98,177 @@ const items = [
 ];
 
 export function CommunitySection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const imageWrapperRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const tagRef = useRef<HTMLParagraphElement>(null);
+  const headlineRef = useRef<HTMLSpanElement>(null);
+  const subtitleRef = useRef<HTMLDivElement>(null);
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
+  const noteRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReduced) return;
+
+    const ctx = gsap.context(() => {
+      // --- Background Parallax ---
+      if (imageWrapperRef.current) {
+        gsap.fromTo(
+          imageWrapperRef.current,
+          { y: "0%" },
+          {
+            y: "-15%",
+            ease: "none",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1.5,
+            },
+          }
+        );
+      }
+
+      // --- Header ---
+      const headerTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: headerRef.current,
+          start: "top 75%",
+          once: true,
+        },
+      });
+
+      // Tag
+      if (tagRef.current) {
+        headerTl.fromTo(
+          tagRef.current,
+          { opacity: 0, letterSpacing: "0.4em" },
+          { opacity: 1, letterSpacing: "0.15em", duration: 0.6 }
+        );
+      }
+
+      // Headline chars with 3D rotateX
+      if (headlineRef.current) {
+        const chars = headlineRef.current.querySelectorAll(".char");
+        headerTl.fromTo(
+          chars,
+          { opacity: 0, y: 40, rotateX: -60 },
+          {
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            stagger: 0.02,
+            duration: 0.5,
+          },
+          "-=0.2"
+        );
+      }
+
+      // --- Subtitle ---
+      if (subtitleRef.current) {
+        gsap.fromTo(
+          subtitleRef.current,
+          { opacity: 0, y: 30, filter: "blur(4px)" },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.8,
+            scrollTrigger: {
+              trigger: subtitleRef.current,
+              start: "top 80%",
+              once: true,
+            },
+          }
+        );
+      }
+
+      // --- Cards with 3D flip ---
+      if (cardsContainerRef.current) {
+        const cards = cardsContainerRef.current.querySelectorAll(".community-card");
+        const icons = cardsContainerRef.current.querySelectorAll(".community-icon");
+
+        const cardsTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: cardsContainerRef.current,
+            start: "top 70%",
+            once: true,
+          },
+        });
+
+        cardsTl.fromTo(
+          cards,
+          { opacity: 0, y: 120, rotateX: -35, scale: 0.85 },
+          {
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            scale: 1,
+            duration: 0.8,
+            ease: "power3.out",
+            stagger: 0.2,
+          }
+        );
+
+        cardsTl.fromTo(
+          icons,
+          { scale: 0, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            ease: "back.out(2)",
+            duration: 0.5,
+            stagger: 0.2,
+          },
+          "-=0.3"
+        );
+      }
+
+      // --- Note ---
+      if (noteRef.current) {
+        gsap.fromTo(
+          noteRef.current,
+          { opacity: 0 },
+          {
+            opacity: 1,
+            duration: 0.8,
+            scrollTrigger: {
+              trigger: noteRef.current,
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       id="acessibilidade"
       className="py-24 sm:py-32 relative overflow-hidden"
     >
-      {/* Background image */}
-      <Image
-        src="/images/community.png"
-        alt=""
-        fill
-        className="object-cover"
-        sizes="100vw"
-        priority={false}
-      />
+      {/* Background image with parallax wrapper */}
+      <div
+        ref={imageWrapperRef}
+        className="absolute inset-0 overflow-hidden"
+        style={{ height: "120%" }}
+      >
+        <Image
+          src="/images/community.png"
+          alt=""
+          fill
+          className="object-cover"
+          sizes="100vw"
+          priority={false}
+        />
+      </div>
       {/* Dark overlay - reduced opacity for more visual richness */}
       <div className="absolute inset-0 bg-ballion-black/70 z-[1]" />
       {/* Subtle gradient for depth */}
@@ -114,48 +276,58 @@ export function CommunitySection() {
 
       <div className="relative z-[3] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <ScrollReveal className="text-center mb-8">
-          <p className="text-sm font-semibold uppercase tracking-widest text-ballion-gold mb-4">
+        <div ref={headerRef} className="text-center mb-8" style={{ perspective: "800px" }}>
+          <p
+            ref={tagRef}
+            className="text-sm font-semibold uppercase tracking-widest text-ballion-gold mb-4"
+            style={{ opacity: 0 }}
+          >
             Acessibilidade Total
           </p>
           <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold uppercase mb-6">
-            TUDO QUE VOCÊ PRECISA
+            <SplitText ref={headlineRef}>TUDO QUE VOCÊ PRECISA</SplitText>
           </h2>
-        </ScrollReveal>
+        </div>
 
         {/* Subtitle */}
-        <ScrollReveal className="text-center max-w-3xl mx-auto mb-16">
+        <div ref={subtitleRef} className="text-center max-w-3xl mx-auto mb-16" style={{ opacity: 0 }}>
           <p className="text-lg sm:text-xl text-ballion-muted leading-relaxed">
             Sem estrutura oficial. Sem equipamento caro. Sem regras complicadas.
             O mundo inteiro é sua arena.
           </p>
-        </ScrollReveal>
+        </div>
 
         {/* Three glass cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-8 mb-10">
-          {items.map((item, i) => (
-            <ScrollReveal key={item.title} delay={i * 0.15}>
-              <div className="glass rounded-2xl p-8 text-center hover:border-ballion-gold/30 transition-colors duration-300 h-full">
-                <div className="flex justify-center mb-5">
-                  {item.icon}
-                </div>
-                <h3 className="font-heading text-2xl sm:text-3xl font-bold uppercase text-white mb-3">
-                  {item.title}
-                </h3>
-                <p className="text-ballion-muted text-sm leading-relaxed">
-                  {item.subtitle}
-                </p>
+        <div
+          ref={cardsContainerRef}
+          className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-8 mb-10"
+          style={{ perspective: "1000px" }}
+        >
+          {items.map((item) => (
+            <div
+              key={item.title}
+              className="community-card glass rounded-2xl p-8 text-center hover:border-ballion-gold/30 transition-colors duration-300 h-full"
+              style={{ opacity: 0 }}
+            >
+              <div className="community-icon flex justify-center mb-5" style={{ opacity: 0 }}>
+                {item.icon}
               </div>
-            </ScrollReveal>
+              <h3 className="font-heading text-2xl sm:text-3xl font-bold uppercase text-white mb-3">
+                {item.title}
+              </h3>
+              <p className="text-ballion-muted text-sm leading-relaxed">
+                {item.subtitle}
+              </p>
+            </div>
           ))}
         </div>
 
         {/* Note */}
-        <ScrollReveal className="text-center">
+        <div ref={noteRef} className="text-center" style={{ opacity: 0 }}>
           <p className="text-sm text-ballion-muted/70">
             + conexão à internet para enviar o vídeo
           </p>
-        </ScrollReveal>
+        </div>
       </div>
     </section>
   );

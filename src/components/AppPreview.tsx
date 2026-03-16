@@ -1,6 +1,11 @@
 "use client";
 
-import { ScrollReveal } from "./ui/scroll-reveal";
+import { useRef, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "./ui/split-text";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const comparisonData = [
   {
@@ -97,8 +102,184 @@ const differentiators = [
 const competitors = ["Mega Sena", "PokerStars", "Bets", "BALLION"] as const;
 
 export function AppPreview() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const tagRef = useRef<HTMLParagraphElement>(null);
+  const headlineRef = useRef<HTMLSpanElement>(null);
+  const slamRef = useRef<HTMLSpanElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
+  const mobileCardsRef = useRef<HTMLDivElement>(null);
+  const diffCardsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReduced) return;
+
+    const ctx = gsap.context(() => {
+      // --- Header animations ---
+      const headerTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: headerRef.current,
+          start: "top 80%",
+          once: true,
+        },
+      });
+
+      // Tag
+      if (tagRef.current) {
+        headerTl.fromTo(
+          tagRef.current,
+          { opacity: 0, y: 15, letterSpacing: "0.4em" },
+          { opacity: 1, y: 0, letterSpacing: "0.15em", duration: 0.6 }
+        );
+      }
+
+      // "NAO E APOSTA." chars
+      if (headlineRef.current) {
+        const headlineChars = headlineRef.current.querySelectorAll(".char");
+        headerTl.fromTo(
+          headlineChars,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, stagger: 0.02, duration: 0.4 },
+          "-=0.2"
+        );
+      }
+
+      // "E HABILIDADE." slam
+      if (slamRef.current) {
+        const slamChars = slamRef.current.querySelectorAll(".char");
+        headerTl.fromTo(
+          slamChars,
+          { scale: 3, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            ease: "power4.out",
+            stagger: 0.04,
+            duration: 0.7,
+          },
+          "-=0.1"
+        );
+      }
+
+      // --- Desktop Table ---
+      if (tableRef.current) {
+        const tableTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: tableRef.current,
+            start: "top 75%",
+            once: true,
+          },
+        });
+
+        const thElements = tableRef.current.querySelectorAll("th");
+        const trElements = tableRef.current.querySelectorAll("tbody tr");
+        const ballionCells = tableRef.current.querySelectorAll(
+          "tbody tr td:last-child"
+        );
+
+        tableTl.fromTo(
+          thElements,
+          { opacity: 0, y: -20 },
+          { opacity: 1, y: 0, stagger: 0.08, duration: 0.4 }
+        );
+
+        tableTl.fromTo(
+          trElements,
+          { opacity: 0, x: 80, clipPath: "inset(0 100% 0 0)" },
+          {
+            opacity: 1,
+            x: 0,
+            clipPath: "inset(0 0% 0 0)",
+            stagger: 0.15,
+            duration: 0.6,
+          },
+          "-=0.2"
+        );
+
+        // Gold pulse on BALLION column after rows land
+        tableTl.to(
+          ballionCells,
+          {
+            boxShadow: "0 0 25px rgba(212,165,74,0.3)",
+            repeat: 2,
+            yoyo: true,
+            duration: 0.4,
+          },
+          "+=1"
+        );
+      }
+
+      // --- Mobile Stacked Cards ---
+      if (mobileCardsRef.current) {
+        const mobileCards =
+          mobileCardsRef.current.querySelectorAll(".mobile-card");
+        gsap.fromTo(
+          mobileCards,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            stagger: 0.15,
+            duration: 0.6,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: mobileCardsRef.current,
+              start: "top 80%",
+              once: true,
+            },
+          }
+        );
+      }
+
+      // --- Differentiator Cards ---
+      if (diffCardsRef.current) {
+        const cards = diffCardsRef.current.querySelectorAll(".diff-card");
+        const icons = diffCardsRef.current.querySelectorAll(".diff-icon");
+
+        const diffTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: diffCardsRef.current,
+            start: "top 75%",
+            once: true,
+          },
+        });
+
+        diffTl.fromTo(
+          cards,
+          { opacity: 0, scale: 0.8, y: 30 },
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            stagger: 0.12,
+            duration: 0.6,
+            ease: "back.out(1.4)",
+          }
+        );
+
+        diffTl.fromTo(
+          icons,
+          { opacity: 0, rotateY: 180 },
+          {
+            opacity: 1,
+            rotateY: 0,
+            duration: 0.5,
+            stagger: 0.12,
+          },
+          "-=0.3"
+        );
+      }
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       id="diferencial"
       className="py-24 sm:py-32 relative overflow-hidden"
     >
@@ -106,18 +287,27 @@ export function AppPreview() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <ScrollReveal className="text-center mb-16">
-          <p className="text-sm font-semibold uppercase tracking-widest text-ballion-gold mb-4">
+        <div ref={headerRef} className="text-center mb-16">
+          <p
+            ref={tagRef}
+            className="text-sm font-semibold uppercase tracking-widest text-ballion-gold mb-4"
+            style={{ opacity: 0 }}
+          >
             Por Que a Ballion É Diferente
           </p>
           <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold uppercase">
-            NÃO É APOSTA.{" "}
-            <span className="text-gold-gradient">É HABILIDADE.</span>
+            <SplitText ref={headlineRef}>NÃO É APOSTA.</SplitText>{" "}
+            <SplitText
+              ref={slamRef}
+              className="text-ballion-gold"
+            >
+              É HABILIDADE.
+            </SplitText>
           </h2>
-        </ScrollReveal>
+        </div>
 
         {/* Desktop Table */}
-        <ScrollReveal className="hidden md:block mb-16">
+        <div ref={tableRef} className="hidden md:block mb-16">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse" aria-label="Comparativo entre plataformas">
               <thead>
@@ -166,70 +356,68 @@ export function AppPreview() {
               </tbody>
             </table>
           </div>
-        </ScrollReveal>
+        </div>
 
         {/* Mobile Stacked Cards */}
-        <div className="md:hidden space-y-4 mb-16">
-          {comparisonData.map((row, i) => (
-            <ScrollReveal key={row.label} delay={i * 0.1}>
-              <div className="rounded-2xl bg-ballion-dark border border-ballion-border p-5">
-                <h4 className="font-heading text-sm uppercase tracking-wider text-ballion-muted mb-4">
-                  {row.label}
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-start gap-3">
-                    <span className="text-ballion-muted/60 text-xs uppercase shrink-0 w-20">
-                      Mega Sena
-                    </span>
-                    <span className="text-ballion-muted/80 text-sm text-right">
-                      {row.megaSena}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-start gap-3">
-                    <span className="text-ballion-muted/60 text-xs uppercase shrink-0 w-20">
-                      PokerStars
-                    </span>
-                    <span className="text-ballion-muted/80 text-sm text-right">
-                      {row.pokerStars}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-start gap-3">
-                    <span className="text-ballion-muted/60 text-xs uppercase shrink-0 w-20">
-                      Bets
-                    </span>
-                    <span className="text-ballion-muted/80 text-sm text-right">
-                      {row.bets}
-                    </span>
-                  </div>
-                  <div className="h-px bg-ballion-gold/20 my-2" />
-                  <div className="flex justify-between items-start gap-3">
-                    <span className="text-ballion-gold text-xs uppercase font-bold shrink-0 w-20">
-                      BALLION
-                    </span>
-                    <span className="text-white font-semibold text-sm text-right">
-                      {row.ballion}
-                    </span>
-                  </div>
+        <div ref={mobileCardsRef} className="md:hidden space-y-4 mb-16">
+          {comparisonData.map((row) => (
+            <div key={row.label} className="mobile-card rounded-2xl bg-ballion-dark border border-ballion-border p-5" style={{ opacity: 0 }}>
+              <h4 className="font-heading text-sm uppercase tracking-wider text-ballion-muted mb-4">
+                {row.label}
+              </h4>
+              <div className="space-y-3">
+                <div className="flex justify-between items-start gap-3">
+                  <span className="text-ballion-muted/60 text-xs uppercase shrink-0 w-20">
+                    Mega Sena
+                  </span>
+                  <span className="text-ballion-muted/80 text-sm text-right">
+                    {row.megaSena}
+                  </span>
+                </div>
+                <div className="flex justify-between items-start gap-3">
+                  <span className="text-ballion-muted/60 text-xs uppercase shrink-0 w-20">
+                    PokerStars
+                  </span>
+                  <span className="text-ballion-muted/80 text-sm text-right">
+                    {row.pokerStars}
+                  </span>
+                </div>
+                <div className="flex justify-between items-start gap-3">
+                  <span className="text-ballion-muted/60 text-xs uppercase shrink-0 w-20">
+                    Bets
+                  </span>
+                  <span className="text-ballion-muted/80 text-sm text-right">
+                    {row.bets}
+                  </span>
+                </div>
+                <div className="h-px bg-ballion-gold/20 my-2" />
+                <div className="flex justify-between items-start gap-3">
+                  <span className="text-ballion-gold text-xs uppercase font-bold shrink-0 w-20">
+                    BALLION
+                  </span>
+                  <span className="text-white font-semibold text-sm text-right">
+                    {row.ballion}
+                  </span>
                 </div>
               </div>
-            </ScrollReveal>
+            </div>
           ))}
         </div>
 
         {/* Differentiator Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {differentiators.map((item, i) => (
-            <ScrollReveal key={item.title} delay={i * 0.1}>
-              <div className="glass rounded-2xl hover:border-ballion-gold/30 transition-colors duration-300 p-6 sm:p-8 h-full text-center">
+        <div ref={diffCardsRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {differentiators.map((item) => (
+            <div key={item.title} className="diff-card glass rounded-2xl hover:border-ballion-gold/30 transition-colors duration-300 p-6 sm:p-8 h-full text-center" style={{ opacity: 0 }}>
+              <div className="diff-icon" style={{ opacity: 0 }}>
                 {item.icon}
-                <h3 className="font-heading text-lg sm:text-xl font-bold uppercase text-white mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-ballion-muted text-sm leading-relaxed">
-                  {item.description}
-                </p>
               </div>
-            </ScrollReveal>
+              <h3 className="font-heading text-lg sm:text-xl font-bold uppercase text-white mb-2">
+                {item.title}
+              </h3>
+              <p className="text-ballion-muted text-sm leading-relaxed">
+                {item.description}
+              </p>
+            </div>
           ))}
         </div>
       </div>

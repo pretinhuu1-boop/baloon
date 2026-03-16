@@ -1,68 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ScrollReveal } from "./ui/scroll-reveal";
+import { SplitText } from "./ui/split-text";
+import { SlotMachineCounter } from "./ui/slot-machine-counter";
 
 gsap.registerPlugin(ScrollTrigger);
-
-function formatBRL(value: number): string {
-  return value.toLocaleString("pt-BR");
-}
-
-function AnimatedBRL({
-  target,
-  duration = 2,
-  className,
-}: {
-  target: number;
-  duration?: number;
-  className?: string;
-}) {
-  const [value, setValue] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const hasAnimated = useRef(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    const trigger = ScrollTrigger.create({
-      trigger: el,
-      start: "top 85%",
-      onEnter: () => {
-        if (hasAnimated.current) return;
-        hasAnimated.current = true;
-
-        if (prefersReduced) {
-          setValue(target);
-          return;
-        }
-
-        const obj = { val: 0 };
-        gsap.to(obj, {
-          val: target,
-          duration,
-          ease: "power2.out",
-          onUpdate: () => setValue(Math.round(obj.val)),
-        });
-      },
-    });
-
-    return () => trigger.kill();
-  }, [target, duration]);
-
-  return (
-    <span ref={ref} className={className}>
-      R$ {formatBRL(value)}
-    </span>
-  );
-}
 
 const rankings = [
   {
@@ -127,9 +71,167 @@ const rankings = [
   },
 ];
 
+// Card entrance directions: each card flies from a different corner
+const cardAnimations = [
+  { x: -200, y: -100, rotateZ: -8 }, // top-left
+  { x: 200, y: -100, rotateZ: 8 },   // top-right
+  { x: -200, y: 100, rotateZ: 8 },   // bottom-left
+  { x: 200, y: 100, rotateZ: -8 },   // bottom-right
+];
+
 export function GamificationSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const tagRef = useRef<HTMLParagraphElement>(null);
+  const headingRef = useRef<HTMLSpanElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const worldFinalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (prefersReduced) {
+      // Show everything immediately
+      const allEls = section.querySelectorAll<HTMLElement>(
+        "[data-animate]"
+      );
+      allEls.forEach((el) => {
+        el.style.opacity = "1";
+        el.style.transform = "none";
+      });
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      // --- Tag "A Premiação": letter-spacing animation ---
+      if (tagRef.current) {
+        gsap.fromTo(
+          tagRef.current,
+          { letterSpacing: "0.4em", opacity: 0 },
+          {
+            letterSpacing: "0.15em",
+            opacity: 1,
+            duration: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: tagRef.current,
+              start: "top 80%",
+              once: true,
+            },
+          }
+        );
+      }
+
+      // --- Heading "CONCORRA A ATÉ": SplitText chars drop from above ---
+      if (headingRef.current) {
+        const chars = headingRef.current.querySelectorAll(".char");
+        gsap.set(chars, { y: -50, opacity: 0 });
+        gsap.to(chars, {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.03,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: headingRef.current,
+            start: "top 80%",
+            once: true,
+          },
+        });
+      }
+
+      // --- Ranking cards: fly in from corners ---
+      cardsRef.current.forEach((card, i) => {
+        if (!card) return;
+        const anim = cardAnimations[i];
+
+        gsap.fromTo(
+          card,
+          {
+            x: anim.x,
+            y: anim.y,
+            rotateZ: anim.rotateZ,
+            opacity: 0,
+          },
+          {
+            x: 0,
+            y: 0,
+            rotateZ: 0,
+            opacity: 1,
+            duration: 1.2,
+            ease: "elastic.out(1, 0.5)",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 70%",
+              once: true,
+            },
+            delay: i * 0.15,
+          }
+        );
+      });
+
+      // --- World Final: curtain reveal + glow pulse ---
+      if (worldFinalRef.current) {
+        gsap.fromTo(
+          worldFinalRef.current,
+          { scaleX: 0, opacity: 0 },
+          {
+            scaleX: 1,
+            opacity: 1,
+            duration: 0.8,
+            ease: "power3.out",
+            transformOrigin: "center center",
+            scrollTrigger: {
+              trigger: worldFinalRef.current,
+              start: "top 75%",
+              once: true,
+            },
+            onComplete: () => {
+              // Subtle border glow pulse after reveal
+              gsap.to(worldFinalRef.current, {
+                boxShadow: "0 0 30px rgba(212,165,74,0.3), 0 0 60px rgba(212,165,74,0.1)",
+                duration: 1.5,
+                ease: "sine.inOut",
+                yoyo: true,
+                repeat: -1,
+              });
+            },
+          }
+        );
+      }
+
+      // --- Subtitle: blur fade-in ---
+      if (subtitleRef.current) {
+        gsap.fromTo(
+          subtitleRef.current,
+          { opacity: 0, y: 30, filter: "blur(4px)" },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: subtitleRef.current,
+              start: "top 80%",
+              once: true,
+            },
+          }
+        );
+      }
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       id="premios"
       className="py-24 sm:py-32 relative overflow-hidden"
     >
@@ -140,34 +242,51 @@ export function GamificationSection() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <ScrollReveal className="text-center mb-12">
-          <p className="text-sm font-semibold uppercase tracking-widest text-ballion-gold mb-4">
+        <div className="text-center mb-12">
+          <p
+            ref={tagRef}
+            data-animate=""
+            className="text-sm font-semibold uppercase tracking-widest text-ballion-gold mb-4"
+            style={{ opacity: 0 }}
+          >
             A Premiação
           </p>
           <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold uppercase mb-4">
-            CONCORRA A ATÉ
+            <SplitText ref={headingRef}>
+              CONCORRA A ATÉ
+            </SplitText>
           </h2>
           <div className="text-5xl sm:text-7xl lg:text-9xl font-heading font-bold uppercase leading-none">
-            <AnimatedBRL
+            <SlotMachineCounter
               target={1000000}
-              duration={2.5}
+              prefix="R$ "
               className="text-gold-gradient"
             />
           </div>
-        </ScrollReveal>
+        </div>
 
         {/* Subtitle */}
-        <ScrollReveal className="text-center max-w-3xl mx-auto mb-16">
-          <p className="text-lg sm:text-xl text-ballion-muted leading-relaxed">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <p
+            ref={subtitleRef}
+            data-animate=""
+            className="text-lg sm:text-xl text-ballion-muted leading-relaxed"
+            style={{ opacity: 0 }}
+          >
             As premiações são financiadas pelo volume de participantes. Quanto
             mais gente participa, maiores os prêmios.
           </p>
-        </ScrollReveal>
+        </div>
 
         {/* Rankings Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto mb-16">
           {rankings.map((ranking, i) => (
-            <ScrollReveal key={ranking.title} delay={i * 0.12}>
+            <div
+              key={ranking.title}
+              ref={(el) => { cardsRef.current[i] = el; }}
+              data-animate=""
+              style={{ opacity: 0 }}
+            >
               <div className="relative rounded-2xl p-[1px] bg-gradient-to-br from-ballion-gold/60 via-ballion-gold-dark/30 to-ballion-gold/60">
                 <div className="rounded-2xl bg-ballion-dark p-6 sm:p-8 h-full">
                   <div className="flex items-center gap-4">
@@ -183,27 +302,30 @@ export function GamificationSection() {
                   </div>
                 </div>
               </div>
-            </ScrollReveal>
+            </div>
           ))}
         </div>
 
         {/* World Final */}
-        <ScrollReveal>
-          <div className="relative rounded-2xl p-[1px] bg-gradient-to-r from-ballion-gold/50 via-ballion-gold to-ballion-gold/50 max-w-3xl mx-auto">
-            <div className="rounded-2xl bg-ballion-dark p-8 sm:p-12 text-center">
-              <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(ellipse_at_center,_rgba(212,165,74,0.08)_0%,_transparent_70%)]" />
-              <div className="relative z-10">
-                <h3 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold uppercase text-gold-gradient mb-4">
-                  BALLION WORLD FINAL
-                </h3>
-                <p className="text-ballion-muted text-base sm:text-lg leading-relaxed max-w-xl mx-auto">
-                  Top jogadores competindo ao vivo. Streaming global para
-                  milhões.
-                </p>
-              </div>
+        <div
+          ref={worldFinalRef}
+          data-animate=""
+          className="relative rounded-2xl p-[1px] bg-gradient-to-r from-ballion-gold/50 via-ballion-gold to-ballion-gold/50 max-w-3xl mx-auto"
+          style={{ opacity: 0 }}
+        >
+          <div className="rounded-2xl bg-ballion-dark p-8 sm:p-12 text-center">
+            <div className="absolute inset-0 rounded-2xl bg-[radial-gradient(ellipse_at_center,_rgba(212,165,74,0.08)_0%,_transparent_70%)]" />
+            <div className="relative z-10">
+              <h3 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold uppercase text-gold-gradient mb-4">
+                BALLION WORLD FINAL
+              </h3>
+              <p className="text-ballion-muted text-base sm:text-lg leading-relaxed max-w-xl mx-auto">
+                Top jogadores competindo ao vivo. Streaming global para
+                milhões.
+              </p>
             </div>
           </div>
-        </ScrollReveal>
+        </div>
       </div>
     </section>
   );
