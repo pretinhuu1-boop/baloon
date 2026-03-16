@@ -1,5 +1,82 @@
 # CLAUDE.md — Ballion Project Guide
 
+---
+
+## REGRAS DE OPERAÇÃO — ANÁLISE DE PROJETOS EXTERNOS
+
+> Protocolo obrigatório para quando trabalhamos com repositórios GitHub, projetos open source ou qualquer codebase externo que será integrado ao nosso projeto.
+
+### Por que isso existe
+
+Cada sessão do Claude começa do zero. Sem documentação prévia, toda análise precisa ser refeita do início. Isso desperdiça tempo e gera compreensão superficial. A única forma de misturar projetos de forma efetiva é entendê-los tão bem quanto o nosso próprio código.
+
+### Protocolo de Análise Profunda
+
+**FASE 1 — Varredura Completa (obrigatória antes de qualquer ação)**
+
+1. **Ler TODOS os arquivos de configuração** — `package.json`, `tsconfig.json`, configs de build, `.env.example`, lockfiles. Entender dependências, scripts, versões exatas.
+2. **Mapear a arquitetura inteira** — Cada pasta, cada arquivo, a árvore completa. Nenhum arquivo pode ser ignorado.
+3. **Ler linha a linha os arquivos-chave** — Entry points, rotas, componentes principais, módulos core, middleware, hooks, utils. Não basta saber que existem, é preciso entender O QUE fazem e COMO fazem.
+4. **Identificar padrões do projeto** — Convenções de nomes, estrutura de componentes, gerenciamento de estado, estratégia de estilo, tratamento de erros, padrões de API.
+5. **Mapear dependências internas** — Quem importa quem. Quais módulos são acoplados. Onde estão os pontos de integração.
+
+**FASE 2 — Documentação de Referência (obrigatória após análise)**
+
+Após compreensão total, gerar um documento de referência (`ANÁLISE-<nome-do-projeto>.md`) contendo:
+
+```
+1. IDENTIDADE
+   - Nome, propósito, público-alvo
+   - Tech stack com versões exatas
+
+2. ARQUITETURA
+   - Árvore de diretórios completa com descrição de cada arquivo
+   - Fluxo de dados (entrada → processamento → saída)
+   - Pontos de entrada da aplicação
+
+3. MAPA DE COMPONENTES / MÓDULOS
+   - Cada componente/módulo com:
+     - Responsabilidade (o que faz)
+     - Props/parâmetros que aceita
+     - Dependências (o que importa)
+     - Dependentes (quem o usa)
+
+4. PADRÕES E CONVENÇÕES
+   - Naming conventions
+   - Estrutura de arquivos
+   - Patterns recorrentes (HOCs, hooks, composables, etc.)
+   - Design system / tokens de design
+
+5. PONTOS DE INTEGRAÇÃO
+   - APIs expostas ou consumidas
+   - Eventos emitidos/recebidos
+   - Interfaces/tipos compartilháveis
+   - Onde nosso projeto pode se conectar
+
+6. ARMADILHAS E OBSERVAÇÕES
+   - Comportamentos não óbvios
+   - Configurações que quebram se alteradas
+   - Dependências de versão críticas
+   - TODOs e débitos técnicos encontrados
+```
+
+**FASE 3 — Validação antes de integrar**
+
+1. **Nunca copiar código sem entender** — Se não consegue explicar cada linha, não está pronto para integrar.
+2. **Identificar conflitos** — Dependências conflitantes, padrões incompatíveis, versões que colidem.
+3. **Planejar a integração** — Definir exatamente quais partes serão extraídas, adaptadas ou reescritas.
+4. **Testar isoladamente** — Antes de misturar, garantir que o trecho funciona sozinho.
+
+### Regras Gerais
+
+- **Profundidade > Velocidade** — Melhor demorar na análise do que quebrar na integração.
+- **Documento primeiro, código depois** — O documento de análise DEVE existir antes de qualquer `import` ou `copy-paste`.
+- **Reler antes de cada sessão** — O CLAUDE.md e os documentos de análise são a primeira coisa a ser lida em qualquer sessão nova.
+- **Atualizar sempre** — Se durante o trabalho algo novo for descoberto, o documento deve ser atualizado imediatamente.
+- **Um projeto por vez** — Analisar completamente um projeto externo antes de começar outro.
+
+---
+
 ## Visão Geral
 
 **Ballion** é uma landing page premium para o app **KickTrak Pro** — uma plataforma de tecnologia para futebol focada em treinos inteligentes, métricas em tempo real e gamificação. O slogan é _"Tecnologia para o futebol de verdade"_.
