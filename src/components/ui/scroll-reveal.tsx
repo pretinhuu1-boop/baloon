@@ -1,19 +1,12 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { cn } from "@/lib/utils";
-
-gsap.registerPlugin(ScrollTrigger);
 
 interface ScrollRevealProps {
   children: React.ReactNode;
   className?: string;
   direction?: "up" | "left" | "right";
   delay?: number;
-  duration?: number;
-  stagger?: number;
 }
 
 export function ScrollReveal({
@@ -21,7 +14,6 @@ export function ScrollReveal({
   className,
   direction = "up",
   delay = 0,
-  duration = 0.8,
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -29,38 +21,47 @@ export function ScrollReveal({
     const el = ref.current;
     if (!el) return;
 
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced) return;
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
 
-    const fromVars: gsap.TweenVars = {
-      opacity: 0,
-      y: direction === "up" ? 50 : 0,
-      x: direction === "left" ? -50 : direction === "right" ? 50 : 0,
-    };
+    if (prefersReduced) {
+      el.style.opacity = "1";
+      el.style.transform = "none";
+      return;
+    }
 
-    gsap.fromTo(el, fromVars, {
-      opacity: 1,
-      y: 0,
-      x: 0,
-      duration,
-      delay,
-      ease: "power3.out",
-      scrollTrigger: {
-        trigger: el,
-        start: "top 85%",
-        toggleActions: "play none none none",
+    const initialTransform =
+      direction === "up"
+        ? "translateY(40px)"
+        : direction === "left"
+          ? "translateX(-40px)"
+          : "translateX(40px)";
+
+    el.style.opacity = "0";
+    el.style.transform = initialTransform;
+    el.style.transition = `opacity 0.7s ease-out ${delay}s, transform 0.7s ease-out ${delay}s`;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            el.style.opacity = "1";
+            el.style.transform = "translateY(0) translateX(0)";
+            observer.unobserve(el);
+          }
+        });
       },
-    });
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
 
-    return () => {
-      ScrollTrigger.getAll().forEach((t) => {
-        if (t.trigger === el) t.kill();
-      });
-    };
-  }, [direction, delay, duration]);
+    observer.observe(el);
+
+    return () => observer.disconnect();
+  }, [direction, delay]);
 
   return (
-    <div ref={ref} className={cn("opacity-0", className)}>
+    <div ref={ref} className={className}>
       {children}
     </div>
   );

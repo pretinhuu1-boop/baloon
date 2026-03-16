@@ -1,40 +1,96 @@
 "use client";
 
+import { useState } from "react";
 import { ScrollReveal } from "./ui/scroll-reveal";
-import { GoldButton } from "./ui/gold-button";
 
 export function CTASection() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (email.trim()) {
+      setSubmitted(true);
+    }
+  }
+
   return (
-    <section id="download" className="py-24 sm:py-32 relative overflow-hidden">
-      {/* Gold radial gradient background */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(212,165,74,0.08)_0%,_transparent_60%)]" />
+    <section
+      id="participar"
+      className="py-24 sm:py-32 relative overflow-hidden"
+    >
+      {/* Stadium spotlight background */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(212,165,74,0.1)_0%,_transparent_50%)]" />
+      <div className="absolute inset-0 stadium-light-left" />
+      <div className="absolute inset-0 stadium-light-right" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(212,165,74,0.06)_0%,_transparent_40%)]" />
 
-      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        {/* Headline */}
         <ScrollReveal>
-          <h2 className="font-[var(--font-heading)] text-4xl sm:text-5xl lg:text-6xl font-bold uppercase mb-6">
-            Comece a treinar{" "}
-            <span className="text-gold-gradient">hoje</span>
+          <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold uppercase mb-2 leading-tight">
+            UMA BOLA. UM CELULAR.
           </h2>
-
-          <p className="text-lg sm:text-xl text-ballion-muted mb-10 max-w-2xl mx-auto">
-            Baixe o KickTrak Pro e transforme seu treino. Disponível para iOS e
-            Android.
+          <p className="font-heading text-5xl sm:text-6xl lg:text-8xl font-bold uppercase text-gold-gradient mb-8 leading-none">
+            UM MILHÃO.
           </p>
+        </ScrollReveal>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <GoldButton href="#" className="text-lg px-10 py-5">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-              </svg>
-              App Store
-            </GoldButton>
-            <GoldButton href="#" variant="ghost" className="text-lg px-10 py-5">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" />
-              </svg>
-              Google Play
-            </GoldButton>
-          </div>
+        {/* Subtitle */}
+        <ScrollReveal className="max-w-2xl mx-auto mb-12">
+          <p className="text-lg sm:text-xl text-ballion-muted leading-relaxed">
+            O mundo inteiro é sua arena. Não importa onde você está — se tem uma
+            bola e um celular, você pode concorrer a R$ 1 milhão.
+          </p>
+        </ScrollReveal>
+
+        {/* Email Form */}
+        <ScrollReveal className="max-w-lg mx-auto mb-8">
+          {submitted ? (
+            <div className="rounded-2xl bg-ballion-dark border border-ballion-gold/30 p-8">
+              <span className="text-4xl block mb-3" role="img" aria-label="Sucesso">
+                ✅
+              </span>
+              <p className="text-white font-heading text-xl uppercase font-bold mb-2">
+                Cadastro realizado!
+              </p>
+              <p className="text-ballion-muted text-sm">
+                Você será avisado assim que a plataforma for lançada.
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+              <label htmlFor="cta-email" className="sr-only">
+                Seu melhor e-mail
+              </label>
+              <input
+                id="cta-email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Seu melhor e-mail"
+                className="flex-1 min-h-[52px] px-5 py-3 rounded-full bg-ballion-dark border border-ballion-border text-white placeholder:text-ballion-muted/60 focus:outline-none focus:border-ballion-gold focus:ring-1 focus:ring-ballion-gold/50 transition-colors duration-300 text-base"
+              />
+              <button
+                type="submit"
+                className="min-h-[52px] px-8 py-3 rounded-full bg-gradient-to-r from-ballion-gold-dark via-ballion-gold to-ballion-gold-light text-ballion-black font-bold uppercase text-sm tracking-wider hover:shadow-[0_0_30px_rgba(212,165,74,0.5)] hover:scale-105 transition-all duration-300 cursor-pointer whitespace-nowrap"
+              >
+                QUERO PARTICIPAR
+              </button>
+            </form>
+          )}
+        </ScrollReveal>
+
+        {/* Small texts */}
+        <ScrollReveal>
+          <p className="text-xs text-ballion-muted/60 mb-3">
+            Plataforma em desenvolvimento. Cadastre-se para ser avisado do
+            lançamento.
+          </p>
+          <p className="text-xs text-ballion-gold/60 font-medium">
+            Não é aposta. É performance real validada por tecnologia.
+          </p>
         </ScrollReveal>
       </div>
     </section>

@@ -1,93 +1,95 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { GoldButton } from "./ui/gold-button";
 
 const navLinks = [
-  { label: "Funcionalidades", href: "#features" },
-  { label: "App", href: "#app-preview" },
-  { label: "Comunidade", href: "#community" },
+  { label: "Como Funciona", href: "#como-funciona" },
+  { label: "Desafio", href: "#metricas" },
+  { label: "Prêmios", href: "#premios" },
+  { label: "FAQ", href: "#faq" },
 ];
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-ballion-black/80 border-b border-ballion-border/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-2">
-            <span className="font-[var(--font-heading)] text-2xl font-bold tracking-wider">
-              <span className="text-white">BALL</span>
-              <span className="text-ballion-gold">ION</span>
-            </span>
-          </a>
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-ballion-black/80 backdrop-blur-md border-b border-ballion-border/50">
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <a href="#" className="font-heading text-2xl tracking-wider">
+          <span className="text-white">BALL</span>
+          <span className="text-ballion-gold">ION</span>
+        </a>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-8">
+          <ul className="flex items-center gap-8 list-none m-0 p-0">
             {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-ballion-muted hover:text-white transition-colors"
-              >
-                {link.label}
-              </a>
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  className="text-ballion-muted text-sm hover:text-ballion-gold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ballion-gold focus-visible:ring-offset-2 focus-visible:ring-offset-ballion-black rounded"
+                >
+                  {link.label}
+                </a>
+              </li>
             ))}
-          </div>
-
-          {/* Desktop CTA */}
-          <div className="hidden md:block">
-            <GoldButton href="#download" className="text-sm px-6 py-2">
-              Baixar App
-            </GoldButton>
-          </div>
-
-          {/* Mobile hamburger */}
-          <button
-            className="md:hidden p-2 text-white"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Menu"
+          </ul>
+          <a
+            href="#participar"
+            className="bg-gradient-to-r from-ballion-gold-dark to-ballion-gold text-ballion-black font-bold text-sm px-5 py-2.5 rounded-full hover:shadow-[0_0_20px_rgba(212,165,74,0.4)] transition-shadow duration-300"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              {isOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
+            PARTICIPAR
+          </a>
         </div>
+
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="md:hidden p-3 text-white"
+          aria-label="Menu de navegação"
+          aria-expanded={isOpen}
+        >
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            {isOpen ? (
+              <path d="M6 6l12 12M6 18L18 6" />
+            ) : (
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
+        </button>
       </div>
 
-      {/* Mobile menu */}
       <div
-        className={cn(
-          "md:hidden overflow-hidden transition-all duration-300 bg-ballion-black/95 backdrop-blur-md",
-          isOpen ? "max-h-64" : "max-h-0"
-        )}
+        className={`md:hidden overflow-hidden transition-all duration-300 ${
+          isOpen ? "max-h-80" : "max-h-0"
+        }`}
       >
-        <div className="px-4 py-4 flex flex-col gap-4">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-ballion-muted hover:text-white transition-colors"
-              onClick={() => setIsOpen(false)}
-            >
-              {link.label}
-            </a>
-          ))}
-          <GoldButton href="#download" className="text-sm px-6 py-2 w-full">
-            Baixar App
-          </GoldButton>
+        <div className="px-6 pb-4 bg-ballion-black/95 backdrop-blur-md">
+          <ul className="space-y-1 list-none m-0 p-0">
+            {navLinks.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className="block min-h-[44px] flex items-center text-ballion-muted hover:text-ballion-gold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ballion-gold rounded"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a
+            href="#participar"
+            onClick={() => setIsOpen(false)}
+            className="block text-center bg-gradient-to-r from-ballion-gold-dark to-ballion-gold text-ballion-black font-bold text-sm px-5 py-3 rounded-full mt-2"
+          >
+            PARTICIPAR
+          </a>
         </div>
       </div>
     </nav>
