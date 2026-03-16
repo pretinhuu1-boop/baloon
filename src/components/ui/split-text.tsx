@@ -5,14 +5,15 @@ import { forwardRef } from "react";
 interface SplitTextProps {
   children: string;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export const SplitText = forwardRef<HTMLSpanElement, SplitTextProps>(
-  function SplitText({ children, className }, ref) {
+  function SplitText({ children, className, style }, ref) {
     const chars = children.split("");
 
     return (
-      <span ref={ref} className={className} aria-label={children}>
+      <span ref={ref} className={className} style={style} aria-label={children}>
         {chars.map((char, i) => (
           <span
             key={`${char}-${i}`}
