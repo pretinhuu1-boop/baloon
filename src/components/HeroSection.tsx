@@ -3,6 +3,7 @@
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { GoldButton } from "./ui/gold-button";
 import { ParticleBg } from "./ui/particle-bg";
 
@@ -53,13 +54,28 @@ export function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
+      {/* Hero background image */}
+      <Image
+        src="/images/hero-ball.jpg"
+        alt=""
+        fill
+        priority
+        className="object-cover opacity-20"
+        sizes="100vw"
+      />
+
+      {/* Dark overlay for legibility */}
+      <div className="absolute inset-0 bg-gradient-to-b from-ballion-black/60 via-ballion-black/80 to-ballion-black z-[1]" />
+
       {/* Particles background */}
-      <ParticleBg />
+      <div className="relative z-[2]">
+        <ParticleBg />
+      </div>
 
       {/* Radial gradient overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(26,71,42,0.15)_0%,_transparent_70%)] z-0" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(26,71,42,0.15)_0%,_transparent_70%)] z-[2]" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <div className="relative z-[3] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left: Content */}
           <div className="flex flex-col gap-6">

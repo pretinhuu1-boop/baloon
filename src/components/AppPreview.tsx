@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ScrollReveal } from "./ui/scroll-reveal";
 import { cn } from "@/lib/utils";
 
@@ -62,16 +63,20 @@ export function AppPreview() {
                   slide.color
                 )}
               />
-              <div className="relative z-10 flex flex-col items-center justify-center h-full p-6 text-center">
-                <div className="w-16 h-16 rounded-2xl bg-ballion-black/50 border border-ballion-border flex items-center justify-center mb-4">
-                  <span className="text-ballion-gold font-[var(--font-heading)] text-xl font-bold">
-                    {i + 1}
-                  </span>
-                </div>
-                <h3 className="font-[var(--font-heading)] text-sm font-bold uppercase mb-2 text-white">
+              {/* App mockup image */}
+              <Image
+                src="/images/app-mockup.jpg"
+                alt={slide.title}
+                fill
+                className="object-cover z-[1]"
+                sizes="(max-width: 640px) 192px, 224px"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-ballion-black/80 via-transparent to-transparent z-[2]" />
+              <div className="relative z-[3] flex flex-col items-center justify-end h-full p-6 text-center pb-8">
+                <h3 className="font-[var(--font-heading)] text-sm font-bold uppercase mb-2 text-white drop-shadow-lg">
                   {slide.title}
                 </h3>
-                <p className="text-xs text-ballion-muted">{slide.description}</p>
+                <p className="text-xs text-ballion-muted drop-shadow-lg">{slide.description}</p>
               </div>
             </button>
           ))}

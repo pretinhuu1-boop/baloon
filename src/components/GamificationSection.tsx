@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { ScrollReveal } from "./ui/scroll-reveal";
 
 const gamificationFeatures = [
@@ -38,18 +39,14 @@ export function GamificationSection() {
           {/* Left: Trophy visual */}
           <ScrollReveal direction="left">
             <div className="relative flex items-center justify-center">
-              <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-gradient-to-br from-ballion-gold/20 to-transparent flex items-center justify-center animate-glow-pulse">
-                <div className="text-8xl sm:text-9xl">🏆</div>
-              </div>
-              {/* Floating coins */}
-              <div className="absolute top-4 right-8 text-4xl animate-bounce" style={{ animationDelay: "0.5s" }}>
-                🪙
-              </div>
-              <div className="absolute bottom-8 left-4 text-3xl animate-bounce" style={{ animationDelay: "1s" }}>
-                🪙
-              </div>
-              <div className="absolute top-1/2 right-0 text-2xl animate-bounce" style={{ animationDelay: "1.5s" }}>
-                🪙
+              <div className="w-72 h-72 sm:w-96 sm:h-96 rounded-2xl overflow-hidden animate-glow-pulse shadow-[0_0_60px_rgba(212,165,74,0.2)]">
+                <Image
+                  src="/images/trophy.jpg"
+                  alt="Troféu Ballion com moedas de ouro"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 288px, 384px"
+                />
               </div>
             </div>
           </ScrollReveal>
