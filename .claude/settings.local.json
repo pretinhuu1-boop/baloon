@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find C:/Users/asus/Desktop/Balloon -name *.md -o -name *.txt -o -name *.pdf)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "Bash(pip install:*)",
+      "Bash(python -c \":*)",
+      "Bash(cp \"C:/Users/asus/Downloads/Cinematic_wideangle_photograph_of_a_football_strik_delpmaspu.png\" \"C:/Users/asus/Desktop/Balloon/public/images/hero-ball.png\")",
+      "Bash(cp \"C:/Users/asus/Downloads/Premium_product_mockup_of_a_modern_smartphone_ipho_delpmaspu.png\" \"C:/Users/asus/Desktop/Balloon/public/images/app-mockup.png\")",
+      "Bash(cp \"C:/Users/asus/Downloads/Luxury_still_life_composition_on_a_draped_dark_eme_delpmaspu.png\" \"C:/Users/asus/Desktop/Balloon/public/images/trophy.png\")",
+      "Bash(cp \"C:/Users/asus/Downloads/Documentarystyle_photograph_of_a_group_of_diverse__delpmaspu.png\" \"C:/Users/asus/Desktop/Balloon/public/images/community.png\")",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(taskkill //F //PID 4276)",
+      "Bash(grep -r \"aria-\\\\|role=\" src/components/*.tsx)",
+      "Bash(grep -r \"max-h-\\\\[44px\\\\]\\\\|min-h-\\\\[44px\\\\]\\\\|w-10 h-10\" src/components/*.tsx)",
+      "Bash(grep -n \"hardcoded\\\\|TODO\\\\|FIXME\\\\|HACK\\\\|XXX\\\\|\\\\[1000000\\\\]\\\\|\\\\.png\\\\|\\\\.jpg\" src/components/*.tsx)",
+      "Bash(find /c/Users/asus/Desktop/Balloon -type f \\\\\\(-name *.glb -o -name *.gltf -o -name *.fbx -o -name *.obj -o -name *.png -o -name *.jpg \\\\\\))",
+      "Bash(find C:UsersasusDesktopagent-engine-module -type f \\\\\\(-name *.css -o -name *.scss -o -name *.sass \\\\\\))",
+      "Bash(find C:UsersasusDesktopagent-engine-modulehubuicomponents -type f \\\\\\(-name *.tsx -o -name *.ts \\\\\\))",
+      "Bash(find C:UsersasusDesktopagent-engine-module -type f -name *.woff* -o -name *.ttf -o -name *.otf)",
+      "Bash(find C:UsersasusDesktopagent-engine-module -type f -name *.svg)",
+      "Bash(find C:UsersasusDesktopagent-engine-moduleshared -type f \\\\\\(-name *.ts -o -name *.tsx \\\\\\))",
+      "Bash(grep -r \"interface.*Card\\\\|interface.*Table\\\\|function.*Card\\\\|function.*Table\" C:UsersasusDesktopagent-engine-modulehubuicomponents --include=*.tsx)",
+      "Bash(grep -r \"canvas\\\\|animation\\\\|draw\" /c/Users/asus/Desktop/_clone-star-office/frontend --include=*.js --include=*.ts --include=*.tsx)",
+      "Bash(find /c/Users/asus/Desktop/Balloon/src -type f -name *.tsx -o -name *.ts)",
+      "Bash(grep -r \"THREE\\\\|3D\\\\|glb\\\\|gltf\\\\|model\" /c/Users/asus/Desktop/Balloon/src --include=*.tsx --include=*.ts)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(rm -rf .next/dev/lock)",
+      "Bash(find /c/Users/asus/Desktop/Balloon/src/components/ui -type f -name *.tsx)",
+      "Bash(ffprobe -v quiet -print_format json -show_format -show_streams \"C:\\\\Users\\\\asus\\\\Downloads\\\\hf_20260316_193444_d53952ae-0c62-4c6a-837a-4b2934b3f1cf.mp4\")",
+      "Bash(ffmpeg -y -i \"C:\\\\Users\\\\asus\\\\Downloads\\\\hf_20260316_193444_d53952ae-0c62-4c6a-837a-4b2934b3f1cf.mp4\" -vf \"select=eq\\(n\\\\,0\\)+eq\\(n\\\\,90\\)+eq\\(n\\\\,180\\)+eq\\(n\\\\,270\\)+eq\\(n\\\\,360\\)\" -vsync vfr \"C:\\\\Users\\\\asus\\\\Desktop\\\\Balloon\\\\tmp_frames\\\\frame_%03d.jpg\")",
+      "Bash(ffmpeg -y -i \"C:\\\\Users\\\\asus\\\\Downloads\\\\hf_20260316_193444_d53952ae-0c62-4c6a-837a-4b2934b3f1cf.mp4\" -vf \"scale=1076:1928,fps=16\" -c:v libwebp -quality 80 \"C:\\\\Users\\\\asus\\\\Desktop\\\\Balloon\\\\public\\\\frames\\\\frame_%04d.webp\")",
+      "Bash(ffmpeg -y -i \"C:\\\\Users\\\\asus\\\\Desktop\\\\Balloon\\\\public\\\\videos\\\\hero-crossbar.mp4\" -vf \"scale=1080:-2\" -c:v libx264 -crf 28 -preset slow -movflags +faststart -an \"C:\\\\Users\\\\asus\\\\Desktop\\\\Balloon\\\\public\\\\videos\\\\hero-crossbar-web.mp4\")",
+      "Bash(identify \"C:\\\\Users\\\\asus\\\\Desktop\\\\Balloon\\\\public\\\\images\\\\app-mockup.png\")",
+      "Bash(ffmpeg -y -i \"C:\\\\Users\\\\asus\\\\Desktop\\\\Balloon\\\\public\\\\images\\\\app-mockup.png\" -vf \"crop=1400:1536:676:0\" \"C:\\\\Users\\\\asus\\\\Desktop\\\\Balloon\\\\public\\\\images\\\\app-mockup-cropped.png\")"
+    ]
+  }
+}
